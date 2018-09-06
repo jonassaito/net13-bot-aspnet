@@ -76,7 +76,7 @@ namespace SimpleBot
             }
             else
             {
-                bson["mensagens"] = profile.Mensagens+1;
+                bson["mensagens"] = profile.Mensagens + 1;
                 col.ReplaceOne(filtro, bson);
             }
         }
