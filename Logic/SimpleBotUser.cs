@@ -1,20 +1,28 @@
-﻿using MongoDB.Bson;
-using MongoDB.Driver;
-using SimpleBot.Logic;
+﻿using SimpleBot.Repository.Mongo;
+using SimpleBot.Repository.Shared.Interfaces;
+using SimpleBot.Repository.SQLServer;
 using System;
-using System.Linq;
 
 namespace SimpleBot
 {
     public class SimpleBotUser
     {
+        static IUserProfileRepository _userProfile;
+
+        static SimpleBotUser()
+        {
+            //_userProfile = new UserProfileMongoRepo();
+            _userProfile = new UserProfileSqlRepo();
+        }
 
         public static string Reply(Message message)
         {
-            GravarMensagem(message);
+            //GravarMensagem(message);
 
             var id = message.Id;
             var profile = GetProfile(id);
+
+            profile.Mensagens++;
 
             SetProfile(profile);
 
@@ -26,29 +34,7 @@ namespace SimpleBot
         {
             try
             {
-                var connection = MongoDbConfiguration.Conexao;
-                var cliente = new MongoClient(connection);
-
-                var db = cliente.GetDatabase(MongoDbConfiguration.Banco);
-
-                var col = db.GetCollection<BsonDocument>("usuario");
-
-                var filtro = Builders<BsonDocument>.Filter.Eq("id", id);
-                var bson = col.Find(filtro).FirstOrDefault();
-
-                if (bson == null)
-                {
-                    return new UserProfile { Id = id, Mensagens = 1 };
-                }
-                else
-                {
-                    return new UserProfile
-                    {
-                        Id = bson["id"].ToString(),
-                        Mensagens = bson["mensagens"].ToInt32()
-                    };
-                }
-
+                return _userProfile.GetProfile(id);
             }
             catch (Exception ex)
             {
@@ -58,49 +44,31 @@ namespace SimpleBot
 
         public static void SetProfile(UserProfile profile)
         {
-            var connection = MongoDbConfiguration.Conexao;
-            var cliente = new MongoClient(connection);
-
-            var db = cliente.GetDatabase(MongoDbConfiguration.Banco);
-
-            var col = db.GetCollection<BsonDocument>(MongoDbConfiguration.TabelaUsuario);
-
-            var filtro = Builders<BsonDocument>.Filter.Eq("id", profile.Id);
-            var bson = col.Find(filtro).FirstOrDefault();
-
-            if (bson == null)
-            {
-                col.InsertOne(new BsonDocument { { "id", profile.Id }, { "mensagens", 1 } });
-            }
-            else
-            {
-                bson["mensagens"] = profile.Mensagens + 1;
-                col.ReplaceOne(filtro, bson);
-            }
+            _userProfile.SetProfile(profile);
         }
-        public static void GravarMensagem(Message message)
-        {
-            try
-            {
-                var connection = MongoDbConfiguration.Conexao;
-                var cliente = new MongoClient(connection);
+        //public static void GravarMensagem(Message message)
+        //{
+        //    try
+        //    {
+        //        var connection = MongoDbConfiguration.Conexao;
+        //        var cliente = new MongoClient(connection);
 
-                var db = cliente.GetDatabase(MongoDbConfiguration.Banco);
+        //        var db = cliente.GetDatabase(MongoDbConfiguration.Banco);
 
-                var col = db.GetCollection<BsonDocument>(MongoDbConfiguration.TabelaMensagem);
-                var bson = new BsonDocument()
-            {
-                { "id" , message.Id  },
-                { "user" , message.User  },
-                { "text" , message.Text  }
-            };
+        //        var col = db.GetCollection<BsonDocument>(MongoDbConfiguration.TabelaMensagem);
+        //        var bson = new BsonDocument()
+        //    {
+        //        { "id" , message.Id  },
+        //        { "user" , message.User  },
+        //        { "text" , message.Text  }
+        //    };
 
-                col.InsertOne(bson);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
+        //        col.InsertOne(bson);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw;
+        //    }
+        //}
     }
 }

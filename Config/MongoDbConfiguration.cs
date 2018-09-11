@@ -1,4 +1,5 @@
-﻿namespace SimpleBot.Logic
+﻿namespace SimpleBot.Config
+
 {
     public static class MongoDbConfiguration
     {

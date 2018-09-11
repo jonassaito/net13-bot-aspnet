@@ -1,4 +1,6 @@
-﻿namespace SimpleBot
+﻿using Dapper.Contrib.Extensions;
+
+namespace SimpleBot
 {
     public class UserProfile
     {

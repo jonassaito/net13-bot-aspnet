@@ -47,6 +47,12 @@
     <NoWarn>CS1998</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Dapper, Version=1.50.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Dapper.1.50.5\lib\net451\Dapper.dll</HintPath>
+    </Reference>
+    <Reference Include="Dapper.Contrib, Version=1.50.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Dapper.Contrib.1.50.5\lib\net451\Dapper.Contrib.dll</HintPath>
+    </Reference>
     <Reference Include="DnsClient, Version=1.0.7.0, Culture=neutral, PublicKeyToken=4574bb5573c51424, processorArchitecture=MSIL">
       <HintPath>packages\DnsClient.1.0.7\lib\net45\DnsClient.dll</HintPath>
     </Reference>
@@ -92,6 +98,7 @@
       <HintPath>packages\System.Buffers.4.4.0\lib\netstandard1.1\System.Buffers.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.IdentityModel.Tokens.Jwt, Version=5.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\System.IdentityModel.Tokens.Jwt.5.2.1\lib\net451\System.IdentityModel.Tokens.Jwt.dll</HintPath>
     </Reference>
@@ -133,14 +140,21 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\SqlDbConfiguration.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Repository\SQLServer\Models\UserProfileSql.cs" />
+    <Compile Include="Repository\SQLServer\UserProfileSqlRepo.cs" />
+    <Compile Include="Shared\Interfaces\IUserProfileRepository.cs" />
     <Compile Include="Logic\Message.cs" />
-    <Compile Include="Logic\MongoDbConfiguration.cs" />
+    <Compile Include="Config\MongoDbConfiguration.cs" />
     <Compile Include="Logic\SimpleBotUser.cs" />
     <Compile Include="Logic\UserProfile.cs" />
+    <Compile Include="Repository\UserProfileMemRepo.cs" />
+    <Compile Include="Repository\Mongo\Models\UserProfileMongo.cs" />
+    <Compile Include="Repository\Mongo\UserProfileMongoRepo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
