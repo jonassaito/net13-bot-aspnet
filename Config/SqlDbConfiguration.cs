@@ -1,9 +1,11 @@
-﻿namespace SimpleBot.Config
+﻿using System.Configuration;
+
+namespace SimpleBot.Config
 
 {
     public static class SqlDbConfiguration
     {
-        public static string SqlDbConnection = @"Data Source=(local);Initial Catalog=SimpleBot;Integrated Security=True;Pooling=False";
+        public static string SqlDbConnection = ConfigurationManager.ConnectionStrings["sqlServer"].ConnectionString;
         //public static string Banco = @"SimpleBot";
 
         //public static string TabelaMensagem = @"mensagem";

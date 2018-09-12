@@ -1,58 +1,55 @@
-﻿using MongoDB.Bson;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using MongoDB;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using SimpleBot.Config;
+using SimpleBot.Repository.Mongo.Models;
 using SimpleBot.Repository.Shared.Interfaces;
-namespace SimpleBot.Repository.Mongo
+
+namespace SimpleBot.Logic
 {
     public class UserProfileMongoRepo : IUserProfileRepository
     {
-        public UserProfile GetProfile(string id)
+        private IMongoCollection<UserProfileMongo> _collection;
+
+        public UserProfileMongoRepo(string connectionString)
         {
-            var connection = MongoDbConfiguration.Conexao;
-            var cliente = new MongoClient(connection);
+            var client = new MongoClient(connectionString);
+            var db = client.GetDatabase(MongoDbConfiguration.Banco);
+            var collection = db.GetCollection<UserProfileMongo>(MongoDbConfiguration.TabelaUsuario);
 
-            var db = cliente.GetDatabase(MongoDbConfiguration.Banco);
-
-            var col = db.GetCollection<BsonDocument>("usuario");
-
-            var filtro = Builders<BsonDocument>.Filter.Eq("id", id);
-            var bson = col.Find(filtro).FirstOrDefault();
-
-            if (bson == null)
-            {
-                return new UserProfile { Id = id, Mensagens = 0 };
-            }
-            else
-            {
-                return new UserProfile
-                {
-                    Id = bson["id"].ToString(),
-                    Mensagens = bson["mensagens"].ToInt32()
-                };
-            }
+            this._collection = collection;
         }
 
-        public void SetProfile(UserProfile profile)
+        public UserProfile GetProfile(string id)
         {
-            var connection = MongoDbConfiguration.Conexao;
-            var cliente = new MongoClient(connection);
+            var filter = Builders<UserProfileMongo>.Filter.Eq("_id", id);
 
-            var db = cliente.GetDatabase(MongoDbConfiguration.Banco);
+            var cursor = _collection.Find(filter);
 
-            var col = db.GetCollection<BsonDocument>(MongoDbConfiguration.TabelaUsuario);
+            var profile = cursor.FirstOrDefault();
 
-            var filtro = Builders<BsonDocument>.Filter.Eq("id", profile.Id);
-            var bson = col.Find(filtro).FirstOrDefault();
-
-            if (bson == null)
+            return new UserProfile
             {
-                col.InsertOne(new BsonDocument { { "id", profile.Id }, { "mensagens", 1 } });
-            }
-            else
+                Id = profile == null ? id : profile._id,
+                Visitas = profile == null ? 0 : profile.Visitas
+            };
+        }
+
+        public void SetProfile(string id, UserProfile profile)
+        {
+            var filter = Builders<UserProfileMongo>.Filter.Eq("_id", id);
+
+            var doc = new UserProfileMongo
             {
-                bson["mensagens"] = profile.Mensagens;
-                col.ReplaceOne(filtro, bson);
-            }
+                _id = profile.Id,
+                Visitas = profile.Visitas
+            };
+
+            _collection.ReplaceOne(filter, doc, new UpdateOptions { IsUpsert = true });
         }
     }
 }

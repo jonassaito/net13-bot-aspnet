@@ -1,4 +1,6 @@
-﻿using SimpleBot.Repository.Mongo;
+﻿using SimpleBot.Config;
+using SimpleBot.Logic;
+using SimpleBot.Repository.Mongo;
 using SimpleBot.Repository.Shared.Interfaces;
 using SimpleBot.Repository.SQLServer;
 using System;
@@ -11,7 +13,7 @@ namespace SimpleBot
 
         static SimpleBotUser()
         {
-            //_userProfile = new UserProfileMongoRepo();
+            //_userProfile = new UserProfileMongoRepo(MongoDbConfiguration.Conexao);
             _userProfile = new UserProfileSqlRepo();
         }
 
@@ -20,32 +22,32 @@ namespace SimpleBot
             //GravarMensagem(message);
 
             var id = message.Id;
-            var profile = GetProfile(id);
+            var profile = _userProfile.GetProfile(id);
 
-            profile.Mensagens++;
+            profile.Visitas += 1;
 
-            SetProfile(profile);
+            _userProfile.SetProfile(id, profile);
 
-            return $"{message.User} disse '{message.Text}' e mandou {profile.Mensagens} mensagens.";
+            return $"{message.User} disse '{message.Text}' e mandou {profile.Visitas} mensagens.";
         }
 
 
-        public static UserProfile GetProfile(string id)
-        {
-            try
-            {
-                return _userProfile.GetProfile(id);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
+        //public static UserProfile GetProfile(string id)
+        //{
+        //    try
+        //    {
+        //        return _userProfile.GetProfile(id);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw;
+        //    }
+        //}
 
-        public static void SetProfile(UserProfile profile)
-        {
-            _userProfile.SetProfile(profile);
-        }
+        //public static void SetProfile(string id, UserProfile profile)
+        //{
+        //    _userProfile.SetProfile(id, profile);
+        //}
         //public static void GravarMensagem(Message message)
         //{
         //    try

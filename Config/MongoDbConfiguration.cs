@@ -1,9 +1,11 @@
-﻿namespace SimpleBot.Config
+﻿using System.Configuration;
+
+namespace SimpleBot.Config
 
 {
     public static class MongoDbConfiguration
     {
-        public static string Conexao = @"mongodb://127.0.0.1:27017";
+        public static string Conexao = ConfigurationManager.ConnectionStrings["mongoDB"].ConnectionString;
         public static string Banco = @"simpleBot";
 
         public static string TabelaMensagem = @"mensagem";

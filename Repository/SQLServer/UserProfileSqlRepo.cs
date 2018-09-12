@@ -18,20 +18,20 @@ namespace SimpleBot.Repository.SQLServer
             }
             if (user == null)
             {
-                return new UserProfile { Id = id, Mensagens = 0 };
+                return new UserProfile { Id = id, Visitas = 0 };
             }
             else
             {
                 return new UserProfile
                 {
                     Id = user.Id,
-                    Mensagens = user.Mensagens
+                    Visitas = user.Visitas
                 };
             }
 
         }
 
-        public void SetProfile(UserProfile profile)
+        public void SetProfile(string id, UserProfile profile)
         {
             try
             {
@@ -48,20 +48,20 @@ namespace SimpleBot.Repository.SQLServer
 
                 if (user == null)
                 {
-                    var sqlINSERT = $"INSERT INTO UserProfile VALUES (@Id, @Mensagens)";
+                    var sqlINSERT = $"INSERT INTO UserProfile VALUES (@Id, @Visitas)";
                     using (var connection = new SqlConnection(Config.SqlDbConfiguration.SqlDbConnection))
                     {
-                        var param = new { profile.Id, profile.Mensagens };
+                        var param = new { profile.Id, profile.Visitas };
                         connection.ExecuteScalar(sqlINSERT, param);
                     }
                 }
                 else
                 {
-                    var sqlUpdate = $"UPDATE UserProfile SET Mensagens = @Mensagens WHERE Id = @Id";
+                    var sqlUpdate = $"UPDATE UserProfile SET Visitas = @Visitas WHERE Id = @Id";
 
                     using (var connection = new SqlConnection(Config.SqlDbConfiguration.SqlDbConnection))
                     {
-                        var param = new { profile.Id, profile.Mensagens };
+                        var param = new { profile.Id, profile.Visitas };
                         connection.ExecuteScalar(sqlUpdate, param);
                     }
                 }

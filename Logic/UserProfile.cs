@@ -1,10 +1,8 @@
-﻿using Dapper.Contrib.Extensions;
-
-namespace SimpleBot
+﻿namespace SimpleBot
 {
     public class UserProfile
     {
         public string Id { get; set; }
-        public int Mensagens { get; set; }
+        public int Visitas { get; set; }
     }
 }
