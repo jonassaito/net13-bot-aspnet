@@ -13,8 +13,8 @@ namespace SimpleBot
 
         static SimpleBotUser()
         {
-            //_userProfile = new UserProfileMongoRepo(MongoDbConfiguration.Conexao);
-            _userProfile = new UserProfileSqlRepo();
+            _userProfile = new UserProfileMongoRepo(MongoDbConfiguration.Conexao);
+            //_userProfile = new UserProfileSqlRepo();
         }
 
         public static string Reply(Message message)
